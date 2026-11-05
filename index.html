@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#263e32">
+  <meta name="description" content="导入 Git 仓库，自动生成连续生长的文件树影片。保留每个提交，呈现新增、内容修改、删除和移动，支持自定义播放速度。">
+  <title>Git 生长影片 · 导入仓库自动生成</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23263e32'/%3E%3Cpath d='M15 25V13M16 18C7 18 6 11 7 8c7 0 11 4 9 10M16 14c-1-6 3-9 9-8 0 6-3 9-9 8' fill='%23d4e8a4' stroke='%23d4e8a4' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./cinema.css">
+  <link rel="stylesheet" href="./import.css">
+  <link rel="stylesheet" href="./studio.css">
+  <link rel="stylesheet" href="./app-studio.css">
+  <script src="./history-adapter.js" defer></script>
+  <script src="./project-state.js" defer></script>
+  <script src="./motion.js" defer></script>
+  <script src="./film.js" defer></script>
+  <script src="./vendor/mediabunny.js" defer></script>
+  <script src="./render.js" defer></script>
+  <script src="./studio.js" defer></script>
+  <script src="./import.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Git 生长影片首页">
+      <span class="brand-mark" aria-hidden="true">✳</span>
+      <span><span class="brand-name">Git 生长影片</span><span class="brand-caption">GIT → GROWTH FILM</span></span>
+    </a>
+    <nav class="site-nav" aria-label="页面导航">
+      <a class="nav-link active" href="#git-import">导入仓库</a>
+      <a class="nav-link" href="#studio">编辑影片</a>
+      <a class="nav-link" href="#experience">动态影片</a>
+      <a class="github-link" id="project-source" href="https://github.com/zalataraglados-prog/StardewValleyAICompanion" target="_blank" rel="noopener noreferrer">当前仓库 <span aria-hidden="true">↗</span></a>
+    </nav>
+    <span class="header-status"><i aria-hidden="true"></i> 每个提交，都看得见</span>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span aria-hidden="true">✦</span> YOUR REPOSITORY, IN MOTION</p>
+        <h1 id="hero-title">把提交历史，<br>变成一段<em>影片</em>。</h1>
+        <p class="hero-subtitle" id="hero-subtitle">导入 · 编辑 · 预览 · 渲染</p>
+        <p class="hero-description" id="hero-description">导入 Git，文件树自动生长。<br>新增、修改、删除与移动，每一笔都留下痕迹。<br class="mobile-break">播放快慢，由你决定。</p>
+        <div class="hero-actions">
+          <a class="primary-btn" href="#git-import">导入我的仓库 <span aria-hidden="true">↗</span></a>
+          <button class="secondary-btn" id="hero-play"><span aria-hidden="true">▶</span> 播放当前影片</button>
+          <a class="secondary-btn" id="project-cta" href="#studio" hidden>了解项目</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <span class="hero-stamp">EVERY COMMIT, ONE MOMENT</span>
+        <canvas class="hero-art" id="growth-art" width="600" height="240" role="img" aria-label="由真实文件数量驱动的代码生长图，亮色叶片代表本次发生变化的文件"></canvas>
+        <div class="hero-kicker"><span aria-hidden="true">●</span> 每一片叶子，都是一次成长的痕迹。</div>
+        <div class="hero-caption"><span id="date-span">正在读取真实历史</span><span>记录仍在继续 ↗</span></div>
+      </div>
+    </section>
+
+    <section class="git-import" id="git-import" aria-labelledby="import-title">
+      <div class="import-heading"><div><p class="section-label">01 / 导入后，自动生成</p><h2 id="import-title">给它一个 Git 仓库。</h2></div><p>完整历史 · 本地解析 · 柔和动画</p></div>
+      <div class="import-grid">
+        <form class="import-card" id="import-form">
+          <h3>公开 GitHub 仓库</h3>
+          <label class="import-field"><span>仓库地址</span><input id="repo-url" type="text" inputmode="url" placeholder="https://github.com/owner/repository" autocomplete="off" spellcheck="false" required disabled></label>
+          <label class="import-field"><span>分支或标签 <small>选填，默认使用仓库默认分支</small></span><input id="repo-ref" type="text" placeholder="例如 main" autocomplete="off" spellcheck="false" disabled></label>
+          <div class="import-actions"><button class="primary-btn" id="import-submit" type="submit" disabled>导入并生成 <span aria-hidden="true">↗</span></button><span class="import-hint">读取完整历史，不合并提交。</span></div>
+        </form>
+        <div class="import-card">
+          <h3>本地或私有仓库</h3>
+          <p class="import-hint">在仓库目录运行下面的命令，选择生成的 Git 历史包。文件只在当前浏览器解析。</p>
+          <div class="import-command"><code id="import-command">git bundle create history.bundle HEAD</code><button id="import-command-copy" type="button" class="text-button">复制</button></div>
+          <label class="import-file-zone"><span>选择 Git 历史包或项目数据</span><input id="import-file" type="file" accept=".bundle,.json" disabled><small>.bundle / .json · 最大 100 MiB；普通源码 ZIP 不含提交历史。</small></label>
+          <p class="import-hint">也可以导入此前保存的项目 JSON，直接恢复影片。</p>
+        </div>
+      </div>
+      <div class="import-feedback"><div class="import-feedback-top"><strong id="import-phase">正在准备影片工具</strong><button id="import-cancel" type="button" class="text-button" hidden>取消导入</button></div><p id="import-detail">播放器与初始项目载入后，即可导入你的仓库。</p><progress id="import-progress" max="100" value="0" hidden></progress><span id="import-status" class="sr-only" role="status" aria-live="polite"></span></div>
+      <div class="import-exports"><span id="active-project-name">当前影片：Stardew Valley AI Companion</span><button id="import-example" type="button" class="text-button" disabled>恢复 Stardew 示例</button><button id="export-data" type="button" class="secondary-btn" disabled>保存项目数据</button><button id="export-page" type="button" class="secondary-btn" disabled>导出离线影片页</button></div>
+    </section>
+
+    <section class="studio-section" id="studio" aria-label="影片编辑台">
+      <div id="studio-editor"><p class="studio-loading">正在准备编辑台…</p></div>
+    </section>
+
+    <section class="overview-stats" aria-label="仓库快照统计">
+      <div class="stat-cell"><span class="stat-label">独立提交</span><strong class="stat-value" id="total-commits">—</strong><span class="stat-note">包含分支历史 · 每个 SHA 单独播放</span></div>
+      <div class="stat-cell"><span class="stat-label">最新文件</span><strong class="stat-value" id="total-files">—</strong><span class="stat-note">所选版本的完整文件树</span></div>
+      <div class="stat-cell"><span class="stat-label">内容修改</span><strong class="stat-value" id="total-modifications">—</strong><span class="stat-note">按文件修改次数累计</span></div>
+      <div class="stat-cell"><span class="stat-label">记录跨度</span><strong class="stat-value" id="day-span">—</strong><span class="stat-note">从第一笔提交开始</span></div>
+    </section>
+
+    <section class="experience cinema-mode" id="experience" aria-labelledby="experience-title">
+      <div class="section-heading">
+        <div><p class="section-label">02 / 一段看得见的成长</p><h2 id="experience-title">让代码的变化，自己讲故事。</h2></div>
+        <div class="section-actions"><span class="filter-pill">Git 真实记录</span><button class="text-button" id="presentation-toggle" aria-pressed="false">⛶ 演示模式</button></div>
+      </div>
+
+      <div class="player" aria-label="更新播放器">
+        <div class="player-toolbar">
+          <button class="play-button" id="play-toggle" aria-label="播放更新" disabled><span id="play-symbol" aria-hidden="true">▶</span><span id="play-label">播放</span></button>
+          <button class="icon-button" id="previous" aria-label="上一条更新" title="上一条（←）" disabled>‹</button>
+          <button class="icon-button" id="next" aria-label="下一条更新" title="下一条（→）" disabled>›</button>
+          <div class="player-position"><strong id="current-position">— / —</strong><span id="current-date">载入中</span><span class="playback-time" id="playback-time">00:00</span></div>
+          <span class="scope-note">每个提交，逐个播放</span>
+          <label class="motion-comfort"><span class="sr-only">动画强度</span><select id="motion-intensity" aria-label="动画强度"><option value="soft" selected>柔和动效</option><option value="reduced">减少运动</option></select></label>
+          <label class="speed-control"><span>速度</span><select id="play-speed" aria-label="播放速度"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option><option value="16">16×</option><option value="32">32×</option><option value="64" selected>64×</option><option value="96">96×</option><option value="128">128×</option><option value="custom">自定义</option></select></label>
+          <label class="custom-speed"><input id="custom-speed" type="number" min="0.25" max="128" step="0.01" value="64" inputmode="decimal" aria-label="自定义播放倍率"><span>×</span></label>
+          <button class="icon-button" id="restart" title="回到起点" aria-label="回到第一条更新">↺</button>
+        </div>
+        <div class="duration-controls" aria-label="整段影片时长">
+          <span>整段时长</span><button type="button" data-duration="30">30 秒</button><button type="button" data-duration="60">1 分钟</button><button type="button" data-duration="90">90 秒</button><button type="button" data-duration="180">3 分钟</button>
+          <span id="speed-estimate" class="speed-estimate">预计全程约 47 秒</span><span class="speed-note">设备较慢时会自动延长，保留每个提交。</span>
+        </div>
+        <div class="player-progress"><input class="timeline-track" id="timeline" type="range" min="0" max="0" value="0" aria-label="选择独立提交" disabled><div class="timeline-ticks" id="timeline-ticks" aria-hidden="true"></div></div>
+        <div class="timeline-labels"><span id="timeline-start">起点</span><span>拖动时间轴，回到任何一次更新</span><span id="timeline-end">现在</span></div>
+      </div>
+
+      <div class="milestones" id="milestones" aria-label="章节定位：定位后继续逐个提交播放"></div>
+
+      <div class="workspace">
+        <section class="explorer" aria-labelledby="explorer-title">
+          <div class="panel-header"><h3 class="panel-title" id="explorer-title"><span aria-hidden="true">⌘</span> 项目文件树</h3><span class="branch-badge">⑂ <span id="tree-branch">main</span> <span id="tree-sha">—</span></span></div>
+          <div class="tree-controls">
+            <div class="segmented" role="group" aria-label="文件树显示范围"><button data-view="motion" class="active" aria-pressed="true">动态影片</button><button data-view="changes" aria-pressed="false">本次变化</button><button data-view="full" aria-pressed="false">完整结构</button></div>
+            <label class="search-wrap"><span aria-hidden="true">⌕</span><input id="tree-search" type="search" placeholder="查找文件…" aria-label="在当前文件树中搜索路径" autocomplete="off"></label>
+          </div>
+          <div class="tree-legend"><span class="legend-item"><i class="status-dot" data-status="A"></i>A 新增</span><span class="legend-item"><i class="status-dot" data-status="M"></i>M 修改</span><span class="legend-item"><i class="status-dot" data-status="D"></i>D 删除</span><span class="legend-item"><i class="status-dot" data-status="R"></i>R 移动</span></div>
+          <div class="tree-summary"><span id="tree-file-count">正在读取文件树…</span><span id="tree-change-count">—</span></div>
+          <div class="motion-stage" id="motion-stage">
+            <canvas id="motion-canvas" role="img" aria-label="真实文件与目录组成的连续生长图，修改以柔和流光标记"></canvas>
+            <div class="motion-overlay"><span class="motion-scene-label">CONTINUOUS GROWTH</span><span class="motion-commit-label" id="motion-commit-label">每个提交，独立留痕</span></div>
+            <div class="motion-focus" id="motion-focus">正在展开真实目录与文件…</div>
+            <div class="motion-events" id="motion-events" aria-label="本次变化的文件"></div>
+          </div>
+          <div class="tree-scroll" id="tree" aria-label="当前更新的文件结构" aria-busy="true" hidden><div class="loading-state"><span class="loading-spinner"></span><p>正在打开这本生长日志…</p></div></div>
+          <div class="file-inspector" id="file-inspector"><div class="file-inspector-path" id="inspector-path">点选一个文件，看看这次改了什么。</div><div class="file-inspector-detail" id="inspector-detail">目录可以展开；修改会独立标记，即使文件数量没有变化。</div></div>
+          <div class="explorer-footer"><span id="tree-scope-note">按真实 Git 差异展示</span><button class="text-button" id="collapse-tree">折叠目录</button></div>
+        </section>
+
+        <article class="story" id="story" aria-labelledby="story-title">
+          <div class="story-topline"><span class="chapter-label" id="chapter-label">GROWTH NOTE / 001</span><time class="commit-date" id="commit-date">—</time></div>
+          <span class="story-category" id="story-category">项目起点</span>
+          <h3 id="story-title">每一段成长，<br>都有迹可循。</h3>
+          <p class="story-summary" id="story-summary">正在读取提交记录与对应的文件变化。</p>
+          <p class="commit-subject" id="commit-subject"></p>
+          <div class="change-stats" aria-label="本次文件变更统计">
+            <div class="change-stat" data-status="A"><strong class="count" id="count-A">0</strong><span class="label">新增</span></div>
+            <div class="change-stat" data-status="M"><strong class="count" id="count-M">0</strong><span class="label">修改</span></div>
+            <div class="change-stat" data-status="D"><strong class="count" id="count-D">0</strong><span class="label">删除</span></div>
+            <div class="change-stat" data-status="R"><strong class="count" id="count-R">0</strong><span class="label">移动</span></div>
+          </div>
+          <p class="delta-note" id="delta-note">文件总量与内容变化，分别记录。</p>
+          <div class="story-why"><span class="story-why-label">这一步的意义</span><p id="story-why">把每一次微小的改动，连接成一个更完整的伙伴。</p></div>
+          <div class="module-tags" id="module-tags"></div>
+          <div class="story-bottom"><span class="evidence-label" id="evidence-label">Git 差异 · 高置信度</span><a class="commit-link" id="commit-link" target="_blank" rel="noopener noreferrer">查看这次提交 ↗</a></div>
+        </article>
+      </div>
+
+      <details class="history-panel" id="history-panel">
+        <summary class="history-toggle"><span>浏览全部更新 <span id="history-total"></span></span><span>按提交标题或文件路径搜索 <span aria-hidden="true">⌄</span></span></summary>
+        <div class="history-controls"><label class="history-search"><span class="sr-only">搜索历史更新</span><input type="search" id="history-search" placeholder="搜索更新标题、SHA、模块或文件路径…" autocomplete="off"></label><span id="history-results"></span></div>
+        <div class="history-list" id="history-list" aria-label="全部主线更新"></div>
+        <button class="secondary-btn history-more" id="history-more" hidden>继续显示更多更新</button>
+      </details>
+      <p class="experience-footnote" id="scope-footnote">完整提交历史：每个 SHA 独立播放；变化相对各自父提交计算。</p>
+      <div class="sr-only" id="player-announcement" aria-live="polite" aria-atomic="true"></div>
+    </section>
+
+    <section class="vision" id="vision" aria-labelledby="vision-title">
+      <div class="vision-heading"><p class="section-label">项目介绍</p><h2 id="vision-title">让陪伴，发生在真实的游戏里。</h2><p id="vision-description">读懂世界，认真计划，再迈出下一步。<br>这是正在构建的方向，也是每一次更新的出发点。</p></div>
+      <div class="vision-grid" id="vision-grid"></div>
+      <div class="roadmap"><div class="roadmap-heading"><span class="section-label">下一段旅程</span><span class="roadmap-status">产品目标 · 持续推进</span></div><div class="roadmap-items" id="roadmap-items"></div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div><a class="brand" href="#"><span class="brand-mark" aria-hidden="true">✳</span><span class="brand-name">Git 生长影片</span></a><p class="footer-note">让每一次提交，都留下可见的痕迹。</p></div><div class="footer-provenance"><p id="snapshot-note">真实仓库历史快照 · 正在载入</p><p id="project-disclaimer">基于真实提交生成，代码变化不等同于产品功能已验收。</p><p><a id="footer-source" class="source-link" href="https://github.com/zalataraglados-prog/StardewValleyAICompanion" target="_blank" rel="noopener noreferrer">查看当前仓库 ↗</a></p></div></footer>
+  <button class="presentation-exit" id="presentation-exit">退出演示 <kbd>Esc</kbd></button>
+  <dialog id="film-preview" class="film-preview-dialog" aria-labelledby="film-preview-title">
+    <div class="film-dialog-header"><div><p class="section-label">影片预览</p><h2 id="film-preview-title">预览最终画面</h2></div><button class="secondary-btn" id="preview-close" type="button">返回编辑 <span aria-hidden="true">×</span></button></div>
+    <div class="film-preview-screen"><canvas id="film-preview-canvas" width="1280" height="720" role="img" aria-label="使用当前编辑内容生成的最终影片预览"></canvas></div>
+    <div class="film-preview-controls"><button class="primary-btn" id="preview-toggle" type="button">暂停</button><label class="film-preview-timeline"><span class="sr-only">预览进度</span><input id="preview-seek" type="range" min="0" max="1" value="0" step="1"></label><output id="preview-time">00:00 / 00:00</output><button class="secondary-btn" id="preview-render" type="button">渲染视频</button></div>
+    <p class="film-preview-note" id="preview-note">预览与渲染使用相同画面，每个提交独立保留。</p>
+  </dialog>
+  <section class="render-result" id="render-result" aria-labelledby="render-result-title" hidden>
+    <div><p class="section-label">视频已就绪</p><h2 id="render-result-title">影片已渲染</h2><p id="render-result-description"></p></div>
+    <video id="render-result-video" controls playsinline preload="metadata"></video>
+    <div class="render-result-actions"><a class="primary-btn" id="render-download" download>下载视频</a><a class="secondary-btn" id="render-report" download>逐提交渲染清单</a><button class="text-button" id="render-result-close" type="button">收起</button></div>
+  </section>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

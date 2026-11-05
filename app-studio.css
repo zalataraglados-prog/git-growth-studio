@@ -1,0 +1,47 @@
+/* The live explorer and final-film preview share the project's palette. */
+.hero-subtitle { margin: 14px 0 10px; color: #657656; font: 12px var(--mono); letter-spacing: .09em; }
+#hero-title, #hero-description, #vision-description, .footer-note { white-space: pre-line; }
+.hero-actions { flex-wrap: wrap; }
+.studio-section { margin: 52px 0 44px; scroll-margin-top: 24px; }
+.studio-lead, .studio-loading { color: #738069; font-size: 12px; }
+.cinema-mode .workspace, .cinema-mode .explorer, .cinema-mode .story-card, .cinema-mode .motion-stage { background: var(--film-background, #172821); color: var(--film-text, #d2dfce); border-color: var(--film-line, #344b3e); }
+.cinema-mode .story { background: var(--film-panel, #1b2d24); color: var(--film-text, #d2dfce); border-color: var(--film-line, #344b3e); }
+.cinema-mode .panel-title, .cinema-mode .story-title, .cinema-mode .story h3, .cinema-mode .file-inspector-path { color: var(--film-text, #d2dfce); }
+.cinema-mode .story-summary, .cinema-mode .story-why, .cinema-mode .tree-legend, .cinema-mode .tree-file-count, .cinema-mode .tree-change-count, .cinema-mode .commit-subject, .cinema-mode .story time { color: var(--film-muted, #a8b99c); }
+.cinema-mode #story-title { font-size: calc(30px * var(--film-scale, 1)); }
+.cinema-mode .story-summary { font-size: calc(13px * var(--film-scale, 1)); }
+.cinema-mode .count, .cinema-mode .delta-note { color: var(--film-a, #a2bf8a); }
+.cinema-mode .panel-header, .cinema-mode .tree-controls, .cinema-mode .file-inspector { border-color: var(--film-line, #344b3e); }
+.film-preview-dialog { width: min(1320px, 96vw); max-height: 96dvh; padding: 22px; border: 1px solid #445444; border-radius: 18px; background: #f3f4e8; color: #2c422f; box-shadow: 0 24px 100px #0008; overflow: auto; }
+.film-preview-dialog::backdrop { background: #0e1c16d9; backdrop-filter: blur(8px); }
+.film-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px; }
+.film-dialog-header h2 { margin: 0; font-size: 23px; }
+.film-dialog-header .section-label { margin: 0 0 7px; }
+.film-preview-screen { display: flex; justify-content: center; align-items: center; min-height: 180px; border-radius: 10px; overflow: hidden; background: #101c17; }
+.film-preview-screen canvas { display: block; max-width: 100%; max-height: 68dvh; width: auto; height: auto; object-fit: contain; }
+.film-preview-controls { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
+.film-preview-controls .primary-btn, .film-preview-controls .secondary-btn { min-height: 36px; padding: 9px 14px; white-space: nowrap; }
+.film-preview-timeline { flex: 1; min-width: 70px; }
+.film-preview-timeline input { width: 100%; accent-color: #637c4b; }
+#preview-time { font: 11px var(--mono); white-space: nowrap; }
+.film-preview-note { margin: 12px 0 0; color: #69795e; font-size: 11px; }
+.render-result { width: min(1210px, calc(100% - 48px)); margin: 35px auto; padding: 24px; border: 1px solid #c9d4bd; border-radius: 16px; background: #f6f7ed; scroll-margin-top: 24px; }
+.render-result h2 { margin: 7px 0 10px; font-size: 25px; color: #2c422f; }
+.render-result p { font-size: 12px; color: #68795c; }
+.render-result video { display: block; width: 100%; max-height: 70vh; margin: 18px 0; border-radius: 10px; background: #14241b; }
+.render-result-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.render-result-actions a { text-decoration: none; }
+@media (max-width: 720px) {
+  .site-nav { gap: 12px; }
+  .site-nav .github-link { display: none; }
+  .studio-section { margin-top: 32px; }
+  .studio-section .section-heading { flex-wrap: wrap; }
+  .film-preview-dialog { padding: 14px; }
+  .film-dialog-header h2 { font-size: 17px; }
+  .film-dialog-header { gap: 12px; }
+  .film-dialog-header .secondary-btn { padding: 8px 10px; font-size: 11px; }
+  .film-preview-controls { flex-wrap: wrap; gap: 8px; }
+  .film-preview-timeline { min-width: calc(100% - 90px); }
+  #preview-render { margin-left: auto; }
+  .render-result { width: calc(100% - 24px); padding: 16px; }
+}
