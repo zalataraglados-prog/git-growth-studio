@@ -47,7 +47,7 @@
   async function start() {
     try {
       const values = window.STARDEW_EMBEDDED ? [window.STARDEW_EMBEDDED.history, window.STARDEW_EMBEDDED.editorial, window.STARDEW_EMBEDDED.project] : await Promise.all([
-        fetch('./history.json').then(r => { if (!r.ok) throw new Error('历史文件读取失败'); return r.json(); }),
+        window.GitHistoryLoader.load(),
         fetch('./editorial.json').then(r => { if (!r.ok) throw new Error('介绍文件读取失败'); return r.json(); })
       ]);
       initialValues = values;

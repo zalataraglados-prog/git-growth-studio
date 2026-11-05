@@ -52,7 +52,7 @@ git bundle create history.bundle HEAD
 - `*.css`：视觉样式与适配。
 - `vendor/`：固定版本的第三方浏览器依赖；见 `vendor/THIRD_PARTY.md`。
 - `server/`：独立运行的本地 HTTP 服务与受限 Git 只读代理。
-- `history.json`, `editorial.json`：用于打开页面时展示的固定示例；可在页面中导入别的仓库覆盖。
+- `history-parts/manifest.json`、`history-parts/*.json`、`editorial.json`：用于打开页面时展示的固定示例（无损分片还原，方便分次上传）；可在页面中导入别的仓库覆盖。
 - `tests/`：基础解析、路径验证和 HTTP 路由测试。
 
 ## 发布说明
