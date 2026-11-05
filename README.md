@@ -61,4 +61,4 @@ git bundle create history.bundle HEAD
 
 网站演示：[StardewAI · 生长日志](https://stardewai-growth-journal.perky-rat-3395.chatgpt.site)
 
-第三方库的上游许可与来源见 `vendor/THIRD_PARTY.md`。本仓库其他原创源码未另行授予开源使用许可。
+第三方库的上游许可与来源见 `vendor/THIRD_PARTY.md`。项目原创代码按仓库根目录 `LICENSE`（MIT）授权，第三方依赖分别遵循自身许可。
